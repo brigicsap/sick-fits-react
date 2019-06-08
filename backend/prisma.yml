@@ -1,0 +1,8 @@
+endpoint: ${env:PRISMA_ENDPOINT}
+datamodel: datamodel.prisma
+# secret: ${env:PRISMA_SECRET} #locks down db
+hooks:
+  post-deploy:
+    # gets schema after it was deployed and saves it in an
+    # updated version of src/generated/prisma.graphql
+    - graphql get-schema -p prisma

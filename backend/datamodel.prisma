@@ -1,0 +1,25 @@
+# schema for Prisma and for the db that lives under Prisma
+# prisma.graphql gets generated based on this file
+
+# @ => directive implemented by the qraphQl server
+# [id, name, email] => fields
+# [ID, String, [String]] => type of the field
+# ! => required
+
+type User {
+  id: ID! @id
+  name: String!
+  email: String!
+}
+
+type Item {
+  id: ID! @id
+  title: String!
+  description: String!
+  image: String
+  largeImage: String
+  price: Int!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  # user: User!
+}
