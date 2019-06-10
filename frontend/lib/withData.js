@@ -1,6 +1,8 @@
-import withApollo from 'next-with-apollo';
-import ApolloClient from 'apollo-boost';
-import { endpoint } from '../config';
+// HOC that exposes the apollo client via a prop
+import withApollo from 'next-with-apollo'
+// adds basic needed setup for apollo client
+import ApolloClient from 'apollo-boost'
+import { endpoint } from '../config'
 
 function createClient({ headers }) {
   return new ApolloClient({
@@ -8,12 +10,13 @@ function createClient({ headers }) {
     request: operation => {
       operation.setContext({
         fetchOptions: {
-          credentials: 'include',
+          // @TODO - set this to include
+          credentials: 'omit'
         },
-        headers,
-      });
-    },
-  });
+        headers
+      })
+    }
+  })
 }
 
-export default withApollo(createClient);
+export default withApollo(createClient)

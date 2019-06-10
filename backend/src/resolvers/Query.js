@@ -5,6 +5,7 @@ const Query = {
   // if this yoga query is the same as the prisma query,
   // we can just forward the prisma query here
   items: forwardTo('db'),
+  item: forwardTo('db'),
   // async items(parent, args, ctx, info) {
   //   console.log('Getting Items!!');
   //   const items = await ctx.db.query.items();
