@@ -144,6 +144,12 @@
     "rules": {
       "react/prop-types": 0,
       "react/react-in-jsx-scope": "off",
+      "react/jsx-max-props-per-line": [
+        true,
+        {
+          "maximum": 1
+        }
+      ],
       "semi": [
         "error",
         "never"
