@@ -72,7 +72,7 @@ class CreateItem extends Component {
       largeImage: file.eager[0].secure_url
     })
   }
-  //Mutation takes a fn as a child, that has args {mutationfunction, payload}
+  // Mutation takes a fn as a child, that has args {mutationfunction, payload}
   // these can be desctructured to the actual mutation handler name
   // and the payload items we need
   render() {

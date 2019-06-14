@@ -10,8 +10,7 @@ function createClient({ headers }) {
     request: operation => {
       operation.setContext({
         fetchOptions: {
-          // @TODO - set this to include
-          credentials: 'omit'
+          credentials: 'include'
         },
         headers
       })
