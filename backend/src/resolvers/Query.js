@@ -8,6 +8,7 @@ const Query = {
 
   //if there's no item, we could throw an error server side, that kicks in the <Error/> comp on the frontend
   item: forwardTo('db'),
+  itemsConnection: forwardTo('db'),
 
   // async items(parent, args, ctx, info) {
   //   console.log('Getting Items!!');

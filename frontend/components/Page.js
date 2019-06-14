@@ -4,7 +4,7 @@ import Header from '../components/Header'
 import Meta from '../components/Meta'
 
 const theme = {
-  red: '#FF0000',
+  red: '#FF4847',
   black: '#393939',
   grey: '#3A3A3A',
   lightgrey: '#E1E1E1',
@@ -28,7 +28,7 @@ const Inner = styled.div`
 injectGlobal`
   @font-face {
     font-family: 'radnika_next';
-    src: url('/static/radnikanext-medium-webfont.woff2');
+    src: url('../static/radnikanext-medium-webfont.woff2');
     format: ('woff2');
     font-weight: normal;
     font-style: normal;
@@ -47,6 +47,7 @@ injectGlobal`
     margin: 0;
     font-size: 1.6rem;
     line-height: 2;
+    font-family: 'radnika-next', sans-serif;
   }
 
   a {
@@ -64,7 +65,6 @@ class Page extends Component {
         <StyledPage>
           <Meta />
           <Header />
-          <p>Hey I&apos;m the page component</p>
           <Inner>{this.props.children}</Inner>
         </StyledPage>
       </ThemeProvider>
