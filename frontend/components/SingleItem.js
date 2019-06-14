@@ -62,7 +62,7 @@ class SingleItem extends Component {
               <title>Sick Fits | {item.title}</title>
             </Head>
             <img
-              src="{item.largeImage}"
+              src={item.largeImage}
               alt={item.title} />
             <div className="details">
               <h2>Viewing {item.title}</h2>

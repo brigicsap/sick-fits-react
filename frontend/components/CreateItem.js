@@ -29,11 +29,11 @@ const CREATE_ITEM_MUTATION = gql`
 class CreateItem extends Component {
 
   state = {
-    title: 'Cool shooes',
-    description: 'Love the shoooes',
-    image: 'shoe.jpg',
+    title: '',
+    description: '',
+    image: '',
     largeImage: '',
-    price: 12000
+    price: 0
   }
   // we need an instance method here because that binds 'this' to the CreateItem instance.
   //es6 classes don't bind regular methods to the instance so we would need that constructor() { super() { this.blah = this.blah.bind(this)}} thing
@@ -44,6 +44,34 @@ class CreateItem extends Component {
     this.setState({ [name]: val })
   }
 
+  uploadFile = async e => {
+    const files = e.target.files
+    const data = new FormData()
+    data.append('file', files[0])
+    // cloudinary preset
+    data.append('upload_preset', 'sickfits')
+    const res = await fetch(
+      'https://api.cloudinary.com/v1_1/ddn6mcrhz/image/upload',
+      {
+        method: 'POST',
+        body: data
+      }
+    )
+
+    const file = await res.json()
+    console.log({ file })
+
+    // @TODO handle error, incorrect file size etc
+    // disable form while processing
+    if (file.error) {
+      return
+    }
+
+    this.setState({
+      image: file.secure_url,
+      largeImage: file.eager[0].secure_url
+    })
+  }
   //Mutation takes a fn as a child, that has args {mutationfunction, payload}
   // these can be desctructured to the actual mutation handler name
   // and the payload items we need
@@ -68,6 +96,22 @@ class CreateItem extends Component {
             <fieldset
               disabled={loading}
               aria-busy={loading}>
+              <label htmlFor="title">
+                Image
+                <input
+                  type="file"
+                  id="file"
+                  placeholder="Upload an image"
+                  required
+                  onChange={this.uploadFile} />
+                {this.state.image &&
+                  <img
+                    width="200"
+                    src={this.state.image}
+                    alt="Upload preview"
+                  />
+                }
+              </label>
               <label htmlFor="title">
                 Title
                 <input
