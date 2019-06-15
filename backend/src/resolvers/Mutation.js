@@ -78,6 +78,30 @@ const Mutations = {
     })
     //return user to the browser
     return user
+  },
+
+  async signin(parent, { email, password }, ctx, info) {
+    // check if there is a user with the entered email
+    const user = await ctx.db.query.user({ where: { email } })
+
+    if (!user) {
+      throw new Error('No user found with this email')
+    }
+
+    // check if the password is correct
+    const valid = await bcrypt.compare(password, user.password)
+    if (!valid) {
+      throw new Error('Invalid password')
+    }
+    // generate jwt token
+    const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET)
+    // set cookie with the token
+    ctx.response.cookie('token', token, {
+      httpOnly: true, // cannot be accessed by javascript
+      maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year cookie
+    })
+    // return user
+    return user
   }
 }
 
