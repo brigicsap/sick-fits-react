@@ -1,4 +1,5 @@
 const { forwardTo } = require('prisma-binding')
+const { hasPermission } = require('../utils')
 
 const Query = {
   // each time a request comes in, it gives the signature of 4 vars
@@ -8,7 +9,9 @@ const Query = {
 
   //if there's no item, we could throw an error server side, that kicks in the <Error/> comp on the frontend
   item: forwardTo('db'),
+
   itemsConnection: forwardTo('db'),
+
   me(parent, args, ctx, info) {
     //check if there is a current user id
     if (!ctx.request.userId) {
@@ -23,6 +26,17 @@ const Query = {
       },
       info
     )
+  },
+
+  async users(parent, args, ctx, info) {
+    // chek if user is logged in
+    if (!ctx.request.userId) {
+      throw new Error('You must be logged in')
+    }
+    // check if user has permissions to query users
+    await hasPermission(ctx.request.user, ['ADMIN', 'PERMISSIONUPDATE'])
+    // if they do query all users
+    return ctx.db.query.users({}, info)
   }
 };
 

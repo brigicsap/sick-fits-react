@@ -24,6 +24,23 @@ server.express.use((req, res, next) => {
   next()
 })
 
+//create middleware that populates the user on each request
+server.express.use(async (req, res, next) => {
+  // if they are ot logged in, skip
+  if (!req.userId) {
+    return next()
+  }
+  // this has been populated in the previous middleware
+  const user = await db.query.user(
+    { where: { id: req.userId } }, //which user
+    '{ id, permissions, name, email }' //graphql fields for that user
+  )
+
+  req.user = user
+
+  next()
+})
+
 server.start(
   {
     cors: {

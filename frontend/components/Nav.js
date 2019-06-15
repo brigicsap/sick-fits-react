@@ -12,7 +12,7 @@ const Nav = () => (
           <a>shop</a>
         </Link>
         {me && (
-          <>
+          <React.Fragment>
             <Link href="/sell">
               <a>sell</a>
             </Link>
@@ -23,7 +23,7 @@ const Nav = () => (
               <a>me</a>
             </Link>
             <Signout />
-          </>
+          </React.Fragment>
         )}
 
         {!me && (

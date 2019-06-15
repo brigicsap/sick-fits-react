@@ -9,7 +9,7 @@ const db = new Prisma({
   endpoint: process.env.PRISMA_ENDPOINT,
   // token for the db on prod
   secret: process.env.PRISMA_SECRET,
-  debug: true
+  debug: false
 })
 
 module.exports = db
