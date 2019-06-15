@@ -1,6 +1,7 @@
 require('dotenv').config({ path: '.env' })
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const { hasPermission } = require('../utils')
 // node built-in module to create tokens
 const { randomBytes } = require('crypto')
 // turns callback-based functions into promise based async functions
@@ -62,9 +63,19 @@ const Mutations = {
   async deleteItem(parent, args, ctx, info) {
     const where = { id: args.id }
     // find the item
-    const item = await ctx.db.query.item({ where }, `{id, title}`)
+    const item = await ctx.db.query.item(
+      { where },
+      `{id title user {id}}`
+    )
     // check if they own the item or have the permission
-    // @TODO above
+    const ownsItem = item.user.id === ctx.request.user.id
+    const hasPermissions = ctx.request.user.permissions
+      .some(permission => ['ADMIN', 'ITEMDELETE']
+        .includes(permission))
+
+    if (!ownsItem && !hasPermission) {
+      throw new Error('You don\'t have permission to do that')
+    }
     // delete item
     return ctx.db.mutation.deleteItem({ where }, info)
   },
@@ -177,6 +188,28 @@ const Mutations = {
     setCookie(ctx, token)
     // return new user
     return updatedUser
+  },
+
+  async updatePermissions(parent, args, ctx, info) {
+    //chek if user is logged in
+    if (!ctx.request.userId) {
+      throw new Error('You must be logged in')
+    }
+    // query current user
+    const currentUser = await ctx.db.query.user({
+      where: { id: ctx.request.userId, }
+    }, info)
+    // check if they have permission to do this
+    hasPermission(currentUser, ['ADMIN', "PERMISSIONUPDATE"])
+    // update permission
+    return ctx.db.mutation.updateUser({
+      data: {
+        permissions: { set: args.permissions }
+      },
+      where: {
+        id: args.userId
+      }
+    }, info)
   }
 }
 
