@@ -3,14 +3,25 @@ import gql from 'graphql-tag'
 import PropTypes from 'prop-types'
 
 const CURRENT_USER_QUERY = gql`
-query SINGLE_ITEM_QUERY {
-  me {
-    id
-    name
-    email
-    permissions
+  query {
+    me {
+      id
+      name
+      email
+      permissions
+      cart {
+        id
+        quantity
+        item {
+          id
+          title
+          price
+          image
+          description
+        }
+      }
+    }
   }
-}
 `
 // render prop component!!
 // user component child component just takes the query payload and passes it further down for other children
