@@ -3,6 +3,7 @@ import { Mutation } from 'react-apollo'
 import NavStyles from './styles/NavStyles'
 import User from '../components/User'
 import Signout from '../components/Signout'
+import CartCount from '../components/CartCount'
 import { TOGGLE_CART_MUTATION } from '../components/Cart'
 
 const Nav = () => (
@@ -26,7 +27,10 @@ const Nav = () => (
             <Signout />
             <Mutation mutation={TOGGLE_CART_MUTATION}>
               {toggleCart => (
-                <button onClick={toggleCart}>My cart</button>
+                <button onClick={toggleCart}>
+                  My cart
+                <CartCount count={me.cart.reduce((tally, cartItem) => tally + cartItem.quantity, 0)} />
+                </button>
               )}
             </Mutation>
           </React.Fragment>

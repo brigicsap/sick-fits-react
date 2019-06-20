@@ -15,6 +15,7 @@ class DeleteItem extends Component {
   update = (cache, payload) => {
     //manually update cache on client so it matches server
     //read cache for the items we want
+    //readQuery => only reads from cache, throws an error if item is not in there, never makes a query to the graphql server
     const data = cache.readQuery({ query: ALL_ITEMS_QUERY })
     //filter the deleted item out of the page
     data.item = data.items.filter(item => item.id !== payload.data.deleteItem.id)
