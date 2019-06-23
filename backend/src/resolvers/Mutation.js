@@ -6,6 +6,7 @@ const { hasPermission } = require('../utils')
 const { randomBytes } = require('crypto')
 // turns callback-based functions into promise based async functions
 const { promisify } = require('util')
+const stripe = require('../stripe')
 
 //helper to set cookie
 const setCookie = (ctx, token) => {
@@ -265,6 +266,71 @@ const Mutations = {
         id: args.id
       }
     }, info)
+  },
+
+  async createOrder(parent, args, ctx, info) {
+    // query current user, make sure they are signed in
+    const { userId } = ctx.request
+    if (!userId) {
+      throw new Error('You must be signed in to complete order')
+    }
+
+    const user = await ctx.db.query.user(
+      { where: { id: userId } },
+      `{
+        id
+        name
+        email
+        cart {
+          id
+          quantity
+          item {
+            id
+            title
+            price
+            description
+            image
+            largeImage
+          }
+        }
+      }`
+    )
+    // recalculate total for the price - on the server side because taking the price from the client side is not safe enough, it can be tricked easily
+    const amount = user.cart.reduce((total, cartItem) => total + cartItem.item.price * cartItem.quantity, 0)
+    // create stripe charge
+    const charge = await stripe.charges.create({
+      amount,
+      currency: 'GBP',
+      source: args.token,
+
+    })
+    // convert cart items to order items
+    const orderItems = user.cart.map(cartItem => {
+      const orderItem = {
+        ...cartItem.item, // because cartItem has a relationship to item and item has all the details we need
+        quantity: cartItem.quantity,
+        user: { connect: { id: userId } },
+      }
+      delete orderItem.id //because it got copied along with the cartItem
+      return orderItem
+    })
+    // create order
+    const order = await ctx.db.mutation.createOrder({
+      data: {
+        charge: charge.id,
+        items: { create: orderItems },
+        total: charge.amount,
+        user: { connect: { id: userId } }
+      }
+    })
+    // clean up - clean users cart, delete cart items
+    const cartItemIds = user.cart.map(cartItem => cartItem.id)
+    // we mapped all the item ids that are in the cart then using the prisma function we delete the ones that match
+    await ctx.db.mutation.deleteManyCartItems({
+      where: { id_in: cartItemIds }
+    })
+    // return order to client
+    return order
   }
 }
 

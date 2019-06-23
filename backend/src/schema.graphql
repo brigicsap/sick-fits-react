@@ -53,13 +53,11 @@ type Mutation {
     userId: ID!
   ): User
 
-  addToCart(
-    id: ID!
-  ): CartItem
-  
-  removeFromCart(
-    id: ID!
-  ): CartItem
+  addToCart(id: ID!): CartItem
+
+  removeFromCart(id: ID!): CartItem
+
+  createOrder(token: String!): Order!
 }
 
 type Query {
@@ -69,10 +67,18 @@ type Query {
     skip: Int,
     first: Int
   ): [Item]!
+
   item(where: ItemWhereUniqueInput!): Item
+
   itemsConnection(where: ItemWhereInput): ItemConnection!
+
   me: User
+
   users: [User]!
+
+  order(id: ID!): Order
+
+  orders(orderBy: OrderOrderByInput): [Order]!
 }
 
 # redefine user type not to expose password and reset tokens on the frontend -> security issue

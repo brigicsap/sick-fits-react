@@ -45,3 +45,27 @@ type CartItem {
   item: Item!
   user: User!
 }
+
+# the orderitem cannot have any relation to the actual item becuase if the item gets deleted or the price changes, we don't want to overcharge the user or change their invoice
+# we have to take a copy of the item and store the details as they were at the time of purchasing
+
+type OrderItem {
+  id: ID! @id
+  title: String!
+  description: String!
+  image: String
+  largeImage: String
+  price: Int!
+  quantity: Int! @default(value: 1)
+  user: User!
+}
+
+type Order {
+  id: ID! @id
+  charge: String!
+  items: [OrderItem!]!
+  total: Int!
+  user: User!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
