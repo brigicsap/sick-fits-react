@@ -36,7 +36,7 @@ class CreateItem extends Component {
     price: 0
   }
   // we need an instance method here because that binds 'this' to the CreateItem instance.
-  //es6 classes don't bind regular methods to the instance so we would need that constructor() { super() { this.blah = this.blah.bind(this)}} thing
+  //es6 classes don't bind regular methods to the instance so we would need that constructor() { this.blah = this.blah.bind(this)} thing
   handleChange = e => {
     const { name, type, value } = e.target
     const val = type === 'number' ? parseFloat(value) : value
